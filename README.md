@@ -8,5 +8,6 @@
 | 06.11.2024    | 2     | Lab: Username enumeration via different responses     | I went through labs on my own, faced a lot of problems and succeed to complete "Username enumeration via different responses" Lab |
 | 07.11.2024    | 1     |  Labs: SQL injection vulnerability in WHERE clause allowing retrieval of hidden data and Unprotected admin functionality    | Today i completed, remaining two assignments from "Introduction to the portswigger environment" assignment |
 | 08.11.2024    | 0.50     | Lab: Path Traversal     | File path traversal, simple case APPRENTICE lab done|
-
+| Row 3    | Data     | Data     | New Data |
+| Row 3    | Data     | Data     | New Data |
 
