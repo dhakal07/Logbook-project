@@ -8,6 +8,6 @@
 | 06.11.2024    | 2     | Lab: Username enumeration via different responses     | I went through labs on my own, faced a lot of problems and succeed to complete "Username enumeration via different responses" Lab |
 | 07.11.2024    | 1     |  Labs: SQL injection vulnerability in WHERE clause allowing retrieval of hidden data and Unprotected admin functionality    | Today i completed, remaining two assignments from "Introduction to the portswigger environment" assignment |
 | 08.11.2024    | 0.50     | Lab: Path Traversal     | File path traversal, simple case APPRENTICE lab done|
-| Row 3    | Data     | Data     | New Data |
-| Row 3    | Data     | Data     | New Data |
+| 11.11.2024    | 3     | Lab: Cross-site scripting     | Completed all the apprentice labs under cross-site scripting, except one (Stored XSS into anchor href attribute with double quotes HTML-encoded) |
+| 13.11.2024    | 4     | week 3 workshop + assignment     | Took part in workshop, asked some questions to ville and started assignment. But still not successful to complete the assignment as there was some error |
 
