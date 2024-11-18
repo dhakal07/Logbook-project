@@ -17,6 +17,10 @@ app.post('/register', async (c) => {
   const password = body.password;
   const birthdate = body.birthdate;
   const role = body.role;
+  const email = body.email;
+  const phone_number = body.phone_number || null; // Optional
+  const age = body.age || null; // Optional
+  const consent_given = body.consent_given === "on"; // Checkbox is "on" if checked
 
   try {
     // Hash the user's password
@@ -25,12 +29,9 @@ app.post('/register', async (c) => {
 
     // Insert the new user into the database
     const result = await client.queryArray(
-      `INSERT INTO zephyr_users (username, password_hash, role, birthdate)
-       VALUES ($1, $2, $3, $4)`,
-      [username,
-      hashedPassword,
-      role,
-      birthdate]
+      `INSERT INTO public.abc123_users (username, password_hash, role, email, phone_number, age, consent_given, created_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, CURRENT_TIMESTAMP)`,
+      [username, hashedPassword, role, email, phone_number, age, consent_given]
     );
 
     // Success response
@@ -41,7 +42,7 @@ app.post('/register', async (c) => {
   }
 });
 
-Deno.serve(app.fetch);
+Deno.serve({ hostname: "localhost", port: 8000 }, app.fetch);
 
 // The Web app starts with the command:
 // deno run --allow-net --allow-env --allow-read --watch app.js
