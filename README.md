@@ -10,4 +10,5 @@
 | 08.11.2024    | 0.50     | Lab: Path Traversal     | File path traversal, simple case APPRENTICE lab done|
 | 11.11.2024    | 3     | Lab: Cross-site scripting     | Completed all the apprentice labs under cross-site scripting, except one (Stored XSS into anchor href attribute with double quotes HTML-encoded) |
 | 13.11.2024    | 4     | week 3 workshop + assignment     | Took part in workshop, asked some questions to ville and started assignment. But still not successful to complete the assignment as there was some error |
-
+| 17.11.2024 | 3 | Week 3 Assignment | Completed "The Booking System Project -> Phase 1 Assignment |
+| 18.11.2024 | 1.50 | The Booking system project - Phase 2 (started) | We had wonderful lecture from Ville and had some insight about the project  |
