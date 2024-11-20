@@ -4,6 +4,15 @@ import * as bcrypt from "https://deno.land/x/bcrypt/mod.ts"; // For password has
 
 const app = new Hono();
 
+// Middleware to add the CSP header
+app.use('*', async (c, next) => {
+  c.header(
+    "Content-Security-Policy",
+    "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self';"
+  );
+  await next();
+});
+
 // Serve the registration form
 app.get('/register', async (c) => {
   return c.html(await Deno.readTextFile('./views/register.html'));
@@ -42,7 +51,10 @@ app.post('/register', async (c) => {
   }
 });
 
-Deno.serve({ hostname: "localhost", port: 8000 }, app.fetch);
+// Close the database connection when stopping the app
+app.on("stop", async () => {
+  await client.end();
+});
 
-// The Web app starts with the command:
-// deno run --allow-net --allow-env --allow-read --watch app.js
+// Start the application
+Deno.serve({ hostname: "localhost", port: 8000 }, app.fetch);
