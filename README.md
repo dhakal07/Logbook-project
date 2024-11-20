@@ -12,3 +12,4 @@
 | 13.11.2024    | 4     | week 3 workshop + assignment     | Took part in workshop, asked some questions to ville and started assignment. But still not successful to complete the assignment as there was some error |
 | 17.11.2024 | 3 | Week 3 Assignment | Completed "The Booking System Project -> Phase 1 Assignment |
 | 18.11.2024 | 1.50 | The Booking system project - Phase 2 (started) | We had wonderful lecture from Ville and had some insight about the project  |
+| 20.11.2024      | 2  | Workshop session | Today i took part in workshop session, asked some problems to Ville and completed the first phase of assignment |
