@@ -32,12 +32,12 @@ CREATE TABLE abc123_reservations (
     FOREIGN KEY (resource_id) REFERENCES abc123_resources (resource_id) ON DELETE CASCADE
 );
 
--- Create public view for booked resources
-CREATE VIEW abc123_booked_resources AS
-SELECT 
-    r.resource_name,
-    rs.start_time,
-    rs.end_time,
-    rs.purpose
-FROM abc123_reservations rs
-JOIN abc123_resources r ON rs.resource_id = r.resource_id;
+-- Create login logs table
+CREATE TABLE abc123_login_logs (
+    log_id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES abc123_users(user_id) ON DELETE CASCADE,
+    login_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    ip_address VARCHAR(255),
+    activity_type VARCHAR(50),
+    user_agent VARCHAR(255)
+);
