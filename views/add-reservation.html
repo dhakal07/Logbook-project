@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Reservation</title>
+</head>
+<body>
+    <h1>Create a New Reservation</h1>
+    <form action="/add-reservation" method="POST">
+        <label for="resource_id">Select Resource:</label>
+        <select id="resource_id" name="resource_id" required>
+            <!-- Populate this dynamically from the available resources -->
+            <option value="1">Resource 1</option>
+            <option value="2">Resource 2</option>
+        </select><br><br>
+
+        <label for="start_time">Start Time:</label>
+        <input type="datetime-local" id="start_time" name="start_time" required><br><br>
+
+        <label for="end_time">End Time:</label>
+        <input type="datetime-local" id="end_time" name="end_time" required><br><br>
+
+        <label for="purpose">Purpose:</label>
+        <input type="text" id="purpose" name="purpose" required><br><br>
+
+        <button type="submit">Create Reservation</button>
+    </form>
+</body>
+</html>

@@ -12,13 +12,17 @@ CREATE TABLE abc123_users (
     data_retention_period INTERVAL NOT NULL DEFAULT INTERVAL '1 year' -- Data retention period
 );
 
--- Create resources table
 CREATE TABLE abc123_resources (
     resource_id SERIAL PRIMARY KEY,
     resource_name VARCHAR(100) NOT NULL,
-    description TEXT,
+    description TEXT NOT NULL,
+    category VARCHAR(50) NOT NULL,
+    quantity INT NOT NULL,
+    price DECIMAL(10, 2) NOT NULL,
+    availability BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
 
 -- Create reservations table
 CREATE TABLE abc123_reservations (

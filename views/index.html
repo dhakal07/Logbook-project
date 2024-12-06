@@ -12,5 +12,28 @@
         <a href="/login"><button>Login</button></a>
         <a href="/register"><button>Register</button></a>
     </nav>
+
+    <!-- Add dynamic role-based options -->
+    <div id="admin-options" style="display:none;">
+        <h2>Administrator Options</h2>
+        <a href="/add-resource"><button>Add Resource</button></a>
+        <a href="/add-reservation"><button>Add Reservation</button></a>
+    </div>
+
+    <div id="user-options" style="display:none;">
+        <h2>User Options</h2>
+        <a href="/view-reservations"><button>View Reservations</button></a>
+    </div>
+
+    <script>
+        // Assuming we have some way of identifying the user's role (e.g., session or JWT token)
+        const userRole = 'administrator'; // This will be dynamic based on session or JWT
+
+        if (userRole === 'administrator') {
+            document.getElementById('admin-options').style.display = 'block';
+        } else if (userRole === 'reserver') {
+            document.getElementById('user-options').style.display = 'block';
+        }
+    </script>
 </body>
 </html>

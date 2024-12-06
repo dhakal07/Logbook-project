@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Resource</title>
+</head>
+<body>
+  <h1>Add New Resource</h1>
+  <form action="/add-resource" method="POST">
+    <label for="resource_name">Resource Name:</label>
+    <input type="text" id="resource_name" name="resource_name" required><br><br>
+
+    <label for="description">Description:</label>
+    <textarea id="description" name="description" required></textarea><br><br>
+
+    <button type="submit">Add Resource</button>
+  </form>
+</body>
+</html>
