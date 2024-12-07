@@ -78,5 +78,3 @@ function getCookieValue(cookies, name) {
 function generateUniqueId() {
   return Math.random().toString(36).substring(2, 15);
 }
-
-
