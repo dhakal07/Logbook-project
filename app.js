@@ -7,12 +7,7 @@ const app = new Hono();
 
 // Middleware for checking if the user is logged in
 async function ensureLoggedIn(c, next) {
-  console.log("Request object:", c.req);
-  console.log("Request headers:", c.req.headers);
-
   const session = await getSession(c);
-  console.log("Session data:", session);
-
   if (!session) {
     return c.redirect('/login');
   }
@@ -21,12 +16,7 @@ async function ensureLoggedIn(c, next) {
 
 // Middleware for checking if the user is an administrator
 async function ensureAdmin(c, next) {
-  console.log("Request object:", c.req);
-  console.log("Request headers:", c.req.headers);
-
   const session = await getSession(c);
-  console.log("Session data:", session);
-
   if (!session || session.role !== 'administrator') {
     return c.text('Access denied. Admins only.', 403);
   }
@@ -35,10 +25,7 @@ async function ensureAdmin(c, next) {
 
 // Security headers middleware
 app.use('*', async (c, next) => {
-  c.header(
-    "Content-Security-Policy",
-    "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; frame-ancestors 'none'; form-action 'self';"
-  );
+  c.header("Content-Security-Policy", "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; frame-ancestors 'none'; form-action 'self';");
   c.header("X-Frame-Options", "DENY");
   c.header("X-Content-Type-Options", "nosniff");
   try {
@@ -64,21 +51,42 @@ app.get('/login', async (c) => {
   return c.html(await Deno.readTextFile('./views/login.html'));
 });
 
+// Serve the privacy policy page
+app.get('/privacy', async (c) => {
+  return c.html(await Deno.readTextFile('./views/privacy.html'));
+});
+
+// Serve the terms of service page
+app.get('/terms', async (c) => {
+  return c.html(await Deno.readTextFile('./views/terms.html'));
+});
+
+// Serve the account page
+app.get('/account', ensureLoggedIn, async (c) => {
+  const session = await getSession(c);
+  const userInfo = { username: session.username, email: session.email };
+  const accountPageContent = await Deno.readTextFile('./views/account.html');
+  const content = accountPageContent
+    .replace('<!-- insert username here -->', userInfo.username)
+    .replace('<!-- insert email here -->', userInfo.email);
+  return c.html(content);
+});
+
 // Handle user registration (form submission)
 app.post('/register', async (c) => {
   const body = await c.req.parseBody();
-  const { username, password, role, email, phone_number, age, consent_given } = body;
-
+  const { username, password, role, email, phone_number, age, consent_given, accept_tos } = body;
+  if (!accept_tos) {
+    return c.text('You must accept the terms of service to register.', 400);
+  }
   try {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-
     await client.queryArray(
       `INSERT INTO public.abc123_users (username, password_hash, role, email, phone_number, age, consent_given, created_at)
        VALUES ($1, $2, $3, $4, $5, $6, $7, CURRENT_TIMESTAMP)`,
       [username, hashedPassword, role, email, phone_number || null, age || null, consent_given === "on"]
     );
-
     return c.redirect('/');
   } catch (error) {
     console.error("Error during registration:", error);
@@ -90,28 +98,21 @@ app.post('/register', async (c) => {
 app.post('/login', async (c) => {
   const body = await c.req.parseBody();
   const { username, password } = body;
-
   try {
     const result = await client.queryArray(
       `SELECT user_id, username, password_hash, role, age FROM public.abc123_users WHERE username = $1`,
       [username]
     );
-
     if (result.rows.length === 0) {
       return c.text('Invalid username or password', 401);
     }
-
     const user = result.rows[0];
     const storedPasswordHash = user[2];
-
     const isPasswordValid = await bcrypt.compare(password, storedPasswordHash);
-
     if (!isPasswordValid) {
       return c.text('Invalid username or password', 401);
     }
-
     await createSession(c, { userId: user[0], username: user[1], role: user[3], age: user[4] });
-
     return c.redirect('/');
   } catch (error) {
     console.error("Error during login:", error);
@@ -122,7 +123,6 @@ app.post('/login', async (c) => {
 // Handle user logout
 app.get('/logout', async (c) => {
   await destroySession(c);
-  console.log(`Session destroyed: ${c.req.headers.get("Cookie")}`);
   return c.redirect('/');
 });
 
@@ -142,18 +142,14 @@ app.post('/add-resource', ensureAdmin, async (c) => {
   try {
     const body = await c.req.parseBody();
     const { resource_name, description } = body;
-
     if (!resource_name || !description) {
       return c.text('All fields are required', 400);
     }
-
     await client.queryArray(
       `INSERT INTO public.abc123_resources (resource_name, description, created_at)
        VALUES ($1, $2, CURRENT_TIMESTAMP)`,
       [resource_name, description]
     );
-
-    console.log('Resource added successfully:', { resource_name, description });
     return c.redirect('/');
   } catch (error) {
     console.error('Error adding resource:', error);
@@ -172,45 +168,35 @@ app.post('/add-reservation', ensureLoggedIn, async (c) => {
     const body = await c.req.parseBody();
     const { resource_id, start_time, end_time, purpose } = body;
     const session = await getSession(c);
-
-    console.log("Received reservation data:", body);
-
     if (!resource_id || !start_time || !end_time || !purpose) {
       return c.text('All fields are required', 400);
     }
-
     if (session.age <= 15) {
       return c.text('Only users over 15 years old can book a resource.', 403);
     }
-
     await client.queryArray(
       `INSERT INTO public.abc123_reservations (resource_id, start_time, end_time, purpose, created_at)
        VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP)`,
       [resource_id, start_time, end_time, purpose]
     );
-
-    console.log('Reservation added successfully:', { resource_id, start_time, end_time, purpose });
     return c.redirect('/');
   } catch (error) {
     console.error('Error adding reservation:', error);
-    console.error("Error details:", error.message);
     return c.text('Error adding reservation', 500);
   }
 });
 
 // Serve the view reservations page
-app.get('/view-reservations', async (c) => {
+app.get('/view-reservations', ensureLoggedIn, async (c) => {
   return c.html(await Deno.readTextFile('./views/view-reservations.html'));
 });
 
 // Fetch reservation data (AJAX)
-app.get('/api/reservations', async (c) => {
+app.get('/api/reservations', ensureLoggedIn, async (c) => {
   try {
     const result = await client.queryArray(
       `SELECT resource_id, start_time, end_time, purpose FROM public.abc123_reservations`
     );
-
-    console.log('Reservations retrieved from database:', result.rows); // Log retrieved reservations
     return c.json(result.rows);
   } catch (error) {
     console.error('Error retrieving reservations:', error);
@@ -257,8 +243,5 @@ app.on("stop", async () => {
 });
 
 
-
 // Start the application
 Deno.serve(app.fetch);
-
-//deno run --allow-net --allow-read --allow-env --allow-write app.js

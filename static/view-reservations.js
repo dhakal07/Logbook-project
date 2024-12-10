@@ -1,36 +1,49 @@
+// Function to fetch reservations data and display it
 async function fetchReservations() {
-    try {
-        console.log('Fetching reservations...'); // Log action
-        const response = await fetch('/api/reservations');
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-
-        const reservations = await response.json();
-        console.log('Fetched Reservations:', reservations); // Log fetched reservations
-
-        const reservationsList = document.getElementById('reservations-list');
-        reservationsList.innerHTML = ''; // Clear the list before adding new items
-
-        if (reservations.length === 0) {
-            reservationsList.textContent = 'No reservations found.';
-        } else {
-            reservations.forEach(reservation => {
-                const reservationItem = document.createElement('div');
-                // Correctly accessing the reservation object properties
-                reservationItem.textContent = `Resource ID: ${reservation.resource_id}, Start Time: ${reservation.start_time}, End Time: ${reservation.end_time}, Purpose: ${reservation.purpose}`;
-                reservationsList.appendChild(reservationItem);
-            });
-        }
-    } catch (error) {
-        console.error('Error fetching reservations:', error);
-        const reservationsList = document.getElementById('reservations-list');
-        reservationsList.textContent = 'Error fetching reservations. Please try again later.';
+  try {
+    console.log('Fetching reservations...');
+    const response = await fetch('/api/reservations');
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
     }
+    
+    const data = await response.json();
+    console.log('Fetched Data:', data); // Log fetched reservations
+
+    // Get the table body element where we'll display the reservations
+    const reservationList = document.getElementById('reservation-list');
+    
+    // Clear any existing rows
+    reservationList.innerHTML = '';
+
+    // Check if reservations are available
+    if (data.length === 0) {
+      reservationList.innerHTML = '<tr><td colspan="4">No reservations found.</td></tr>';
+      return;
+    }
+    
+    // Loop through the data and create table rows
+    data.forEach(reservation => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${reservation.resource_id || 'N/A'}</td>
+        <td>${new Date(reservation.start_time).toLocaleString() || 'N/A'}</td>
+        <td>${new Date(reservation.end_time).toLocaleString() || 'N/A'}</td>
+        <td>${reservation.purpose || 'N/A'}</td>
+      `;
+      reservationList.appendChild(row);
+    });
+  } catch (error) {
+    console.error('Error fetching reservations:', error);
+
+    // Handle errors by displaying a message in the table
+    const reservationList = document.getElementById('reservation-list');
+    reservationList.innerHTML = '<tr><td colspan="4">Error fetching reservations. Please try again later.</td></tr>';
+  }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM fully loaded and parsed'); // Log DOM load
-    fetchReservations();
-});
+// Call the function to fetch and display the reservations when the page loads
+window.onload = () => {
+  fetchReservations();
+};
