@@ -245,3 +245,5 @@ app.on("stop", async () => {
 
 // Start the application
 Deno.serve(app.fetch);
+
+//docker exec -it booking_system_db psql -U postgres -d postgres
